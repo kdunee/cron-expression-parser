@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+import argparse
+from cron_expression_parser import parse_cron_string, CronParsingError
+import logging
+import sys
+
+def main():
+    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.WARNING)
+    logger = logging.getLogger("cron_expression_parser")
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("cron_string", type=str, help="A cron string, e.g. \"*/15 0 1,15 * 1-5 /usr/bin/find\"")
+    args = parser.parse_args()
+
+    try:
+        cron_entry = parse_cron_string(args.cron_string)
+        print(cron_entry)
+    except CronParsingError:
+        logger.exception("Failed to parse the input")
+        sys.exit(1)
+    except:
+        logger.exception("Failed with an unexpected error")
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
